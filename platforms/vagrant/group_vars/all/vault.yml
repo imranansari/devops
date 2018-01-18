@@ -1,0 +1,2 @@
+vault_docker_registry_username: docker
+vault_docker_registry_password: docker
