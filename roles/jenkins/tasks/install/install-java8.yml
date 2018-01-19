@@ -4,21 +4,34 @@
   become: yes
   apt: name=software-properties-common state=latest
 
-- name: Add Oracle Java Repository
-  become: yes
-  apt_repository: repo='ppa:webupd8team/java'
+# - name: Add Oracle Java Repository
+#   become: yes
+#   apt_repository: repo='ppa:webupd8team/java'
 
-- name: Accept Java 8 License
-  become: yes
-  debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+# - name: Accept Java 8 License
+#   become: yes
+#   debconf: name='oracle-java8-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
 
-- command: apt-get update
-  become: yes
+# - command: apt-get update
+#   become: yes
 
-- name: Install Oracle Java 8
+# - name: Install Oracle Java 8
+#   become: yes
+#   command: apt-get install {{item}} -y
+#   with_items:
+#     - oracle-java8-installer
+#     - ca-certificates
+#     - oracle-java8-set-default
+
+- name: Install default jre
   become: yes
-  command: apt-get install {{item}} -y
-  with_items:
-    - oracle-java8-installer
-    - ca-certificates
-    - oracle-java8-set-default
+  shell: add-apt-repository ppa:openjdk-r/ppa
+
+- name: update
+  become: yes
+  shell: apt-get update
+
+- name: install jre8
+  become: yes
+  shell: >
+     apt-get install -y openjdk-8-jdk ca-certificates
