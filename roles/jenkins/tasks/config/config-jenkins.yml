@@ -31,3 +31,26 @@
 
 - include: config-jenkins-plugin.yml
 
+- name: 'Create job directory'
+  file:
+    path: /var/lib/jenkins/tmp
+    state: directory
+    mode: 0755
+  become: True
+
+- name: 'Copy config.xml into jenkins jobs folder'
+  copy:
+    src: "{{ role_path }}/files/config.xml"
+    dest: "{{ jenkins_etc_home_location }}/tmp/config.xml"
+    owner: "{{ jenkins_etc_user }}"
+    group: "{{ jenkins_etc_user }}"
+    mode: '0644'
+  become: True
+
+- name: 'Create job'
+  become: True
+  shell: >
+          java -jar /var/lib/jenkins/jenkins-cli.jar -auth admin:admin -s http://{{ jenkins_etc_listen_address }}:{{ jenkins_etc_http_port }} create-job demoKafka < {{ jenkins_etc_home_location }}/tmp/config.xml
+
+- name: restart jenkins
+  include: "{{role_path}}/tasks/utils/restart-jenkins.yml"  
